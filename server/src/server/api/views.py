@@ -108,6 +108,7 @@ class VideoViewSet(viewsets.ModelViewSet):
         )
 
         os.system('chown 1000:1000 -hR "' + settings.MEDIA_ROOT + '"')
+        os.system('chmod +r "' + settings.MEDIA_ROOT + '/*"')
 
 
 @csrf_exempt
