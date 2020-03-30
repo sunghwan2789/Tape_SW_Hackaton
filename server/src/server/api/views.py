@@ -88,27 +88,31 @@ class VideoViewSet(viewsets.ModelViewSet):
         # Get reult file & save the file at filtering field
         output_path = os.path.join(settings.TAPE_ROOT, 'output/')
 
-        result_file = "filter_" + upload_file.name
-        thumnail = "filter_" + upload_file.name + '.jpg'
+        result_filename = "filter_" + upload_file.name
+        thumnail_filename = "filter_" + upload_file.name + '.jpg'
 
         # copy media directory
         fs = FileSystemStorage()
-        result_file = fs.save(result_file, open(
+        result_filename = fs.save(result_filename, open(
             output_path + "test2.mp4", "rb"))
         fs = FileSystemStorage()
-        thumnail = fs.save(thumnail, open(output_path + "test2.jpg", 'rb'))
+        thumnail_filename = fs.save(
+            thumnail_filename, open(output_path + "test2.jpg", 'rb'))
+        fs = FileSystemStorage()
+        upload_filename = fs.save(None, upload_file)
+
+        # fix permissions
+        os.system('chown 1000:1000 -R "' + settings.MEDIA_ROOT + '"')
+        os.system('chmod +r -R "' + settings.MEDIA_ROOT + '"')
 
         serializer.save(
             user=User.objects.get(pk=self.request.data.get('user', 1)),
             title=self.request.data.get('title'),
-            filepath=upload_file,
+            filepath=upload_filename,
             description=self.request.data.get('description'),
-            filterpath=result_file,
-            thumbnail=thumnail,
+            filterpath=result_filename,
+            thumbnail=thumnail_filename,
         )
-
-        os.system('chown 1000:1000 -hR "' + settings.MEDIA_ROOT + '"')
-        os.system('chmod +r "' + settings.MEDIA_ROOT + '/*"')
 
 
 @csrf_exempt
