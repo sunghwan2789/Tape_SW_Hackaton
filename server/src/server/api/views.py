@@ -18,25 +18,34 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
+
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
-        fields = ['id', 'user', 'title', 'filepath', 'filterpath', 'pub_date', 'thumbnail', 'description']
+        fields = ['id', 'user', 'title', 'filepath',
+                  'filterpath', 'pub_date', 'thumbnail', 'description']
     user = serializers.SerializerMethodField()
+
     def get_user(self, obj):
         return obj.user.profile.name
+
 
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.order_by('-id')
@@ -49,7 +58,8 @@ class VideoViewSet(viewsets.ModelViewSet):
 
         q = self.request.query_params.get('q', None)
         if q is not None:
-            queryset = queryset.filter(title__contains=q) | queryset.filter(description__contains=q)
+            queryset = queryset.filter(title__contains=q) | queryset.filter(
+                description__contains=q)
 
         return queryset
 
@@ -83,23 +93,28 @@ class VideoViewSet(viewsets.ModelViewSet):
 
         # copy media directory
         fs = FileSystemStorage()
-        result_file = fs.save(result_file, open(output_path + "test2.mp4", "rb"))
+        result_file = fs.save(result_file, open(
+            output_path + "test2.mp4", "rb"))
         fs = FileSystemStorage()
         thumnail = fs.save(thumnail, open(output_path + "test2.jpg", 'rb'))
 
         serializer.save(
-            user=User.objects.get(pk=self.request.data.get('user')),
+            user=User.objects.get(pk=self.request.data.get('user', 1)),
             title=self.request.data.get('title'),
             filepath=upload_file,
             description=self.request.data.get('description'),
             filterpath=result_file,
             thumbnail=thumnail,
-            )
+        )
+
+        os.system('chown 1000:1000 -hR "' + settings.MEDIA_ROOT + '"')
+
 
 @csrf_exempt
 def login(request):
     try:
-        user = auth.authenticate(request, username=request.POST['phone'], password=request.POST['password'])
+        user = auth.authenticate(
+            request, username=request.POST['phone'], password=request.POST['password'])
         if user is not None:
             auth.login(request, user)
             return JsonResponse({
@@ -111,10 +126,12 @@ def login(request):
             'error': str(ex),
         })
 
+
 @csrf_exempt
 def signup(request):
     try:
-        user = User.objects.create_user(username=request.POST['phone'], password=request.POST['password'])
+        user = User.objects.create_user(
+            username=request.POST['phone'], password=request.POST['password'])
         user.profile.name = request.POST['name']
         user.profile.passwordQuestion = request.POST['password_question']
         user.profile.passwordQuestionAnswer = request.POST['password_question_answer']

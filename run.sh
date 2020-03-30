@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 sudo docker run -it --rm \
   -v data:/var/lib/mysql \
   -v `pwd`/server/credential.json:/credential.json \

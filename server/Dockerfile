@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.7
 
 #
 # Google Cloud Sdk 설치
@@ -36,7 +36,11 @@ RUN apt install -y ffmpeg
 RUN apt install -y mariadb-server
 
 # django 설치
-RUN pip install django djangorestframework==3.9 django-rest-swagger mysqlclient
+RUN pip install \
+  django==2.2.11 \
+  djangorestframework==3.9.0 \
+  django-rest-swagger==2.2.0 \
+  mysqlclient
 
 # 기본 DB 생성
 RUN service mysql start && echo create database server\; | mysql -u root
@@ -46,7 +50,7 @@ EXPOSE 80 443 8000
 # nginx 설치
 RUN apt install -y nginx
 
-ENTRYPOINT service mysql start \
+CMD service mysql start \
   && python /server/manage.py migrate \
   && service nginx start \
   && python /server/manage.py runserver
