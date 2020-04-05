@@ -1,8 +1,9 @@
 import utils
 import threading
 import profane_recognizer
+import sys
 
-input_file = 'input/test2.mp4'
+input_file = sys.argv[1] if len(sys.argv) > 1 else 'input/test2.mp4'
 
 if __name__ == '__main__':
 
