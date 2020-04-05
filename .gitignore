@@ -1,2 +1,4 @@
 # Google Application Credentials
 server/credential.json
+
+.DS_Store
