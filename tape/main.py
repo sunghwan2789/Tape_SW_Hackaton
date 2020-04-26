@@ -25,11 +25,8 @@ if __name__ == '__main__':
 
     '''
     Google speech api를 사용하여 30초의 간격으로 나눠진 사용자의 오디오를 넣어 결과를 저장합니다.
-    나눠진 오디오를 차례차례 하나씩 Google speech api를 거치는 것은 작업 속도가 느리기 때문에 threading을 사용하여 처리합니다.
-    또한, 결과의 정확도를 높이기 위해 과정을 한번 더 반복 합니다.
     '''
     print('단어 프로세싱')
-    print('첫번째 단계')
     task0 = [None] * len(audio_data_0)
     for i, val in enumerate(audio_data_0):
         task0[i] = threading.Thread(target=profane_recognizer.get_profane_time, args=(0, i, val[0], val[1]))
@@ -38,16 +35,6 @@ if __name__ == '__main__':
     for i, _ in enumerate(audio_data_0):
         print(str(i + 1) + ' / ' + str(len(audio_data_0)))
         task0[i].join()
-
-    print('두번째 단계')
-    task1 = [None] * len(audio_data_1)
-    for i, val in enumerate(audio_data_1):
-        task1[i] = threading.Thread(target=profane_recognizer.get_profane_time, args=(1, i, val[0], val[1]))
-        task1[i].start()
-
-    for i, _ in enumerate(audio_data_1):
-        print(str(i + 1) + ' / ' + str(len(audio_data_1)))
-        task1[i].join()
 
     # 저장된 결과를 불러옵니다.
     print('결과 불러오기')
