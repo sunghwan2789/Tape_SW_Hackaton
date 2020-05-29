@@ -1,0 +1,6 @@
+pydub
+google-cloud-speech
+django==2.2.12
+djangorestframework==3.9.0
+wemake-python-styleguide
+black
