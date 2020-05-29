@@ -1,5 +1,6 @@
 {
-  "python.linting.pylintEnabled": true,
-  "python.linting.enabled": false,
-  "python.pythonPath": "/usr/local/bin/python3"
+  "python.pythonPath": ".direnv/python-3.7.7/bin/python",
+  "python.formatting.provider": "black",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true
 }
