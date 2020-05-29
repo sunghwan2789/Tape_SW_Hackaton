@@ -8,6 +8,10 @@ black = "*"
 wemake-python-styleguide = "*"
 
 [packages]
+pydub = "*"
+google-cloud-speech = "*"
+django = "==2.2.12"
+djangorestframework = "==3.9"
 
 [requires]
 python_version = "3.7"
