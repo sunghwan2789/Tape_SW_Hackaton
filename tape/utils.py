@@ -1,4 +1,5 @@
 import os
+
 from pydub import AudioSegment
 
 
@@ -102,9 +103,9 @@ def generate_sound(start_and_end_time):
 
     for start, end in start_and_end_time:
         result_sound = (
-            result_sound[: start * 1000]
-            + beep_sound[: (end - start) * 1000]
-            + result_sound[end * 1000 :]
+            result_sound[:start]
+            + beep_sound[:end - start]
+            + result_sound[end:]
         )
 
     result_sound.export("detector_result/audio_result.wav", format="wav")
