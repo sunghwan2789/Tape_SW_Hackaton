@@ -1,4 +1,4 @@
-import google_cloud_api as gc_api
+from .api.speechtotext import transcribe_file_with_word_time_offsets
 
 
 def get_profane_time(index1, index2, file_path_and_name, start_time):
@@ -11,9 +11,7 @@ def get_profane_time(index1, index2, file_path_and_name, start_time):
     :param end_time: 단어의 끝점
     :return:
     """
-    word_and_startend_time = gc_api.transcribe_file_with_word_time_offsets(
-        file_path_and_name
-    )
+    word_and_startend_time = transcribe_file_with_word_time_offsets(file_path_and_name)
 
     defined_profane_word = []
     f = open("profane_word.txt", "r")
@@ -29,4 +27,3 @@ def get_profane_time(index1, index2, file_path_and_name, start_time):
     f = open("detector_result/" + str(index1) + "_" + str(index2) + ".txt", "w")
     for start, end in profane_startend_time:
         f.write(str(start) + "," + str(end) + "\n")
-
