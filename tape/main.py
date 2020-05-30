@@ -1,51 +1,54 @@
-import utils
-import threading
-import profane_recognizer
 import sys
+import threading
 
-input_file = sys.argv[1] if len(sys.argv) > 1 else 'input/test2.mp4'
+import profane_recognizer
+import utils
 
-if __name__ == '__main__':
+input_file = sys.argv[1] if len(sys.argv) > 1 else "input/test2.mp4"
 
-    #프로그램을 시작하기 전 tmp 데이터들을 삭제합니다.
-    print('TEMP 데이터 삭제')
+if __name__ == "__main__":
+
+    # 프로그램을 시작하기 전 tmp 데이터들을 삭제합니다.
+    print("TEMP 데이터 삭제")
     utils.delete_all_data_files()
 
-    #ffmpeg를 사용하여 입력된 비디오에서 오디오를 추출합니다.
-    print('오디오 추출')
+    # ffmpeg를 사용하여 입력된 비디오에서 오디오를 추출합니다.
+    print("오디오 추출")
     utils.extract_audio_in_video(input_file)
 
-    #ffmpeg를 사용하여 입력된 비디오에서 썸네일을 추출합니다.
-    print('썸네일 추출')
+    # ffmpeg를 사용하여 입력된 비디오에서 썸네일을 추출합니다.
+    print("썸네일 추출")
     utils.extract_image_in_video(input_file)
 
-    #오디오를 30초의 간격으로 자릅니다.
-    print('오디오 자르기')
+    # 오디오를 30초의 간격으로 자릅니다.
+    print("오디오 자르기")
     audio_data_0, audio_data_1 = utils.divide_audio(30.0)
 
-    '''
+    """
     Google speech api를 사용하여 30초의 간격으로 나눠진 사용자의 오디오를 넣어 결과를 저장합니다.
-    '''
-    print('단어 프로세싱')
+    """
+    print("단어 프로세싱")
     task0 = [None] * len(audio_data_0)
     for i, val in enumerate(audio_data_0):
-        task0[i] = threading.Thread(target=profane_recognizer.get_profane_time, args=(0, i, val[0], val[1]))
+        task0[i] = threading.Thread(
+            target=profane_recognizer.get_profane_time, args=(0, i, val[0], val[1])
+        )
         task0[i].start()
 
     for i, _ in enumerate(audio_data_0):
-        print(str(i + 1) + ' / ' + str(len(audio_data_0)))
+        print(str(i + 1) + " / " + str(len(audio_data_0)))
         task0[i].join()
 
     # 저장된 결과를 불러옵니다.
-    print('결과 불러오기')
+    print("결과 불러오기")
     result = utils.get_all_data()
 
     # 결과를 바탕으로 비프음 처리된 오디오를 생성합니다.
-    print('오디오 생성')
+    print("오디오 생성")
     utils.generate_sound(result)
 
-    #처리된 오디오와 기존의 영상을 합찹니다.
-    print('결과 생성')
+    # 처리된 오디오와 기존의 영상을 합찹니다.
+    print("결과 생성")
     utils.combine_audio_and_video(input_file)
 
-    print('성공!')
+    print("성공!")
