@@ -6,7 +6,7 @@ from google.cloud.speech_v1 import enums, types
 
 def transcribe_file_with_word_time_offsets(
     speech_file: str,
-) -> Iterable[Tuple[str, str, str]]:
+) -> Iterable[Tuple[str, float, float]]:
     """Recognize words with time offsets from a speech file.
 
     Args:
