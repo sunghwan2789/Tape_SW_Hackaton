@@ -12,9 +12,10 @@ class VideoManagerTest(unittest.TestCase):
         )
         _, audio = tempfile.mkstemp(".wav")
 
-        manager.extract_audio(audio)
+        extracted_audio = manager.extract_audio(audio)
 
-        self.assertTrue(os.path.exists(audio))
+        self.assertEqual(audio, extracted_audio)
+        self.assertTrue(os.path.exists(extracted_audio))
 
         os.remove(audio)
 
@@ -24,9 +25,10 @@ class VideoManagerTest(unittest.TestCase):
         )
         _, thumbnail = tempfile.mkstemp(".jpg")
 
-        manager.extract_thumbnail(thumbnail)
+        extracted_thumbnail = manager.extract_thumbnail(thumbnail)
 
-        self.assertTrue(os.path.exists(thumbnail))
+        self.assertEqual(thumbnail, extracted_thumbnail)
+        self.assertTrue(os.path.exists(extracted_thumbnail))
 
         os.remove(thumbnail)
 
