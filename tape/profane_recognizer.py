@@ -1,4 +1,4 @@
-from .api.speechtotext import transcribe_file_with_word_time_offsets
+from api.speechtotext import transcribe_file_with_word_time_offsets
 
 
 def get_profane_time(index1, index2, file_path_and_name, start_time):

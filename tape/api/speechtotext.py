@@ -1,7 +1,6 @@
 from typing import Iterable, Tuple
 
-from google.cloud import speech_v1
-from google.cloud.speech_v1 import enums, types
+from google.cloud.speech_v1 import SpeechClient, enums, types
 
 
 def transcribe_file_with_word_time_offsets(
@@ -34,7 +33,7 @@ def transcribe_file_with_word_time_offsets(
         https://cloud.google.com/speech-to-text/docs/sync-recognize
 
     """
-    client = speech_v1.SpeechClient()
+    client = SpeechClient()
 
     with open(speech_file, "rb") as audio_file:
         content = audio_file.read()
