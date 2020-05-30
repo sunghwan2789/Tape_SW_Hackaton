@@ -13,7 +13,8 @@ with open(os.path.join(os.path.dirname(__file__), "logger.json")) as logger:
 
 input_file = sys.argv[1] if len(sys.argv) > 1 else "input/test2.mp4"
 
-if __name__ == "__main__":
+
+def main():
     manager = VideoManager(input_file)
     audio = manager.extract_audio("output/a.wav")
     thumbnail = manager.extract_thumbnail("output/a.jpg")
@@ -30,3 +31,7 @@ if __name__ == "__main__":
 
     manager.apply_audio(audio_manager.save("output/a.wav"))
     manager.save("output/a.mp4")
+
+
+if __name__ == "__main__":
+    main()
