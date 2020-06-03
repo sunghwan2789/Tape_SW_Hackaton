@@ -1,5 +1,8 @@
 pydub
 google-cloud-speech
+google-cloud-vision
+moviepy
+pygame
 django==2.2.12
 djangorestframework==3.9.0
 wemake-python-styleguide
