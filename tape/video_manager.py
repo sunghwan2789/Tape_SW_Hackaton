@@ -123,7 +123,7 @@ class VideoManager(object):
                     "-map",
                     "1:a",
                     # output file
-                    "output/" + filename,
+                    filename,
                 ]
             )
             completed_process.check_returncode()
