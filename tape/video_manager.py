@@ -1,9 +1,13 @@
+import pathlib
 import subprocess
+from typing import List, Tuple
 
 
 class VideoManager(object):
     def __init__(self, filename: str):
         self.filename = filename
+        self.deferred_audio = None
+        self.deferred_masks: List[Tuple[int, int, str]] = []
 
     def extract_audio(self, output_filename: str = None) -> str:
         """Extract audio file from video.
@@ -84,10 +88,42 @@ class VideoManager(object):
         return output_filename
 
     def apply_mask(self, start_time, end_time):
-        pass
+        if not "detect_mask":
+            self.deferred_masks.append([start_time, end_time, "mask"])
 
     def apply_audio(self, audio: str):
-        pass
+        self.deferred_audio = audio
 
-    def save(self):
-        pass
+    def save(self, filename: str):
+        if self.deferred_audio:
+            completed_process = subprocess.run(
+                [
+                    "ffmpeg",
+                    # loglevel
+                    "-v",
+                    "warning",
+                    # overwrite output
+                    "-y",
+                    # input video
+                    "-i",
+                    self.filename,
+                    # filtered audio
+                    "-i",
+                    self.deferred_audio,
+                    # video convert option
+                    "-c:v",
+                    "copy",
+                    # audio convert option
+                    "-c:a",
+                    "aac",
+                    # use input video
+                    "-map",
+                    "0:v",
+                    # use filtered audio
+                    "-map",
+                    "1:a",
+                    # output file
+                    "output/" + filename,
+                ]
+            )
+            completed_process.check_returncode()
