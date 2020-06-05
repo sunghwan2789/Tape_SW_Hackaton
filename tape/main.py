@@ -29,7 +29,7 @@ def main():
             audio_manager.apply_beep(start, end)
             manager.apply_mask(start, end)
 
-    manager.apply_audio(audio_manager.save("output/a.wav"))
+    manager.apply_audio(audio_manager.save("output/a_beep.wav"))
     manager.save("output/a.mp4")
 
 
