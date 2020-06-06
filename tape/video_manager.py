@@ -1,4 +1,3 @@
-import pathlib
 import subprocess
 from typing import List, Tuple
 
@@ -19,6 +18,7 @@ class VideoManager(object):
             Filename of the extracted audio.
 
         """
+
         completed_process = subprocess.run(
             [
                 "ffmpeg",

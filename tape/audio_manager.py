@@ -1,12 +1,12 @@
-import os
+from pathlib import Path
 
 from pydub import AudioSegment
 
+import settings
+
 
 class AudioManager(object):
-    beep_sound = AudioSegment.from_wav(
-        os.path.join(os.path.dirname(__file__), "beep.wav"),
-    )
+    beep_sound = AudioSegment.from_wav(settings.ROOT / "beep.wav",)
 
     def __init__(self, filename: str):
         self.filename = filename

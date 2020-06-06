@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+import settings
 from api.speechtotext import transcribe_file_with_word_time_offsets
 
 
@@ -16,7 +17,7 @@ def get_profane_time(index1, index2, file_path_and_name, start_time):
     word_and_startend_time = transcribe_file_with_word_time_offsets(file_path_and_name)
 
     defined_profane_word = []
-    f = open("profane_word.txt", "r")
+    f = open(settings.ROOT / "profane_word.txt", "r")
     defined_profane_word = f.read().split()
 
     profane_startend_time = []
@@ -32,7 +33,7 @@ def get_profane_time(index1, index2, file_path_and_name, start_time):
 
 
 def detect_mature_word(word: str):
-    with open("profane_word.txt", "r") as profane_word:
+    with open(settings.ROOT / "profane_word.txt", "r") as profane_word:
         defined_profane_word: List[str] = profane_word.read().split()
 
     return any(
