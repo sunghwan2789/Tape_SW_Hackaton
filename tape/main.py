@@ -1,4 +1,5 @@
 import json
+import logging
 import logging.config
 import os
 import sys
@@ -8,13 +9,17 @@ from profane_recognizer import detect_mature_word
 from transcriber import Transcriber
 from video_manager import VideoManager
 
-with open(os.path.join(os.path.dirname(__file__), "logger.json")) as logger:
-    logging.config.dictConfig(json.load(logger))
+with open(os.path.join(os.path.dirname(__file__), "logger.json")) as config:
+    logging.config.dictConfig(json.load(config))
 
 input_file = sys.argv[1] if len(sys.argv) > 1 else "input/test2.mp4"
 
 
 def main():
+    logger = logging.getLogger()
+
+    logger.info("start processing %s", input_file)
+
     manager = VideoManager(input_file)
     audio = manager.extract_audio("output/a.wav")
     thumbnail = manager.extract_thumbnail("output/a.jpg")

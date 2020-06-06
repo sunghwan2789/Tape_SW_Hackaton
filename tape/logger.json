@@ -26,15 +26,12 @@
             "filename": "error.log"
         }
     },
-    "loggers": {
-        "__main__": {
-            "level": "DEBUG",
-            "handlers": [
-                "console",
-                "file_debug",
-                "file_error"
-            ],
-            "propagate": true
-        }
+    "root": {
+        "level": "DEBUG",
+        "handlers": [
+            "console",
+            "file_debug",
+            "file_error"
+        ]
     }
 }
