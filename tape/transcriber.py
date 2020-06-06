@@ -14,7 +14,7 @@ class Transcriber(object):
         self.audio_manager = audio_manager
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    def transcribe(self, segment_time=60_000) -> Iterable[Tuple[str, int, int, int]]:
+    def transcribe(self, segment_time=60) -> Iterable[Tuple[str, int, int, int]]:
         self.logger.info("audio playtime is %s", self.audio_manager.playtime)
 
         last_recognition_start = 0
@@ -39,14 +39,14 @@ class Transcriber(object):
 
                 yield (
                     word,
-                    new_recognition_start + start * 1_000,
-                    new_recognition_start + end * 1_000,
+                    new_recognition_start + start,
+                    new_recognition_start + end,
                 )
 
-                last_recognition_start = new_recognition_start + start * 1_000
+                last_recognition_start = new_recognition_start + start
 
             if not word_spoken:
-                last_recognition_start += segment_time - 2_000
+                last_recognition_start += segment_time - 2
 
             if last_recognition_start + segment_time >= self.audio_manager.playtime:
                 break

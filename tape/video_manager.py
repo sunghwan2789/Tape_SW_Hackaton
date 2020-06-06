@@ -1,6 +1,8 @@
 import subprocess
 from typing import List, Tuple
 
+import settings
+
 
 class VideoManager(object):
     def __init__(self, filename: str):
@@ -48,7 +50,7 @@ class VideoManager(object):
         completed_process.check_returncode()
         return output_filename
 
-    def extract_thumbnail(self, output_filename: str = None) -> str:
+    def extract_thumbnail(self, output_filename: str = None, time="00:00:00") -> str:
         """Extract thumbnail file from video.
 
         Args:
@@ -68,7 +70,7 @@ class VideoManager(object):
                 "-y",
                 # thumbnail time
                 "-ss",
-                "00:00:00",
+                time,
                 # input file
                 "-i",
                 self.filename,
@@ -77,9 +79,6 @@ class VideoManager(object):
                 "1",
                 # audio null
                 "-an",
-                # size
-                "-s",
-                "1280x720",
                 # output file
                 output_filename,
             ],
@@ -88,6 +87,9 @@ class VideoManager(object):
         return output_filename
 
     def apply_mask(self, start_time, end_time):
+        def generate_thumbnail():
+            thumbnail = self.extract_thumbnail(settings.ROOT / "output/t.jpg")
+
         if not "detect_mask":
             self.deferred_masks.append([start_time, end_time, "mask"])
 
