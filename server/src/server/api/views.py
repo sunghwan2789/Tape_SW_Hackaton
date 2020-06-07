@@ -55,7 +55,9 @@ class VideoSerializer(serializers.ModelSerializer):
             "pub_date",
             "thumbnail",
             "description",
+            "filters",
         ]
+        depth = 1
 
     user = serializers.SerializerMethodField()
 
@@ -115,11 +117,11 @@ class VideoViewSet(viewsets.ModelViewSet):
         # copy media directory
         fs = FileSystemStorage()
         result_filename = fs.save(
-            result_filename, open(tape_result['filter_video'], "rb")
+            result_filename, open(tape_result["filter_video"], "rb")
         )
         fs = FileSystemStorage()
         thumnail_filename = fs.save(
-            thumnail_filename, open(tape_result['thumbnail'], "rb")
+            thumnail_filename, open(tape_result["thumbnail"], "rb")
         )
         fs = FileSystemStorage()
         upload_filename = fs.save(None, upload_file)
@@ -128,13 +130,17 @@ class VideoViewSet(viewsets.ModelViewSet):
         os.system('chown 1000:1000 -R "' + settings.MEDIA_ROOT + '"')
         os.system('chmod +r -R "' + settings.MEDIA_ROOT + '"')
 
-        serializer.save(
+        video = serializer.save(
             user=User.objects.get(pk=self.request.data.get("user", 1)),
             title=self.request.data.get("title"),
             filepath=upload_filename,
             description=self.request.data.get("description"),
             filterpath=result_filename,
             thumbnail=thumnail_filename,
+        )
+
+        FilterSection.objects.bulk_create(
+            [FilterSection(video=video, **i) for i in tape_result["filter_sections"]]
         )
 
 
