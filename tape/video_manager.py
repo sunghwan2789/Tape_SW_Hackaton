@@ -1,9 +1,18 @@
+import logging
 import subprocess
+from typing import Any, List, Tuple
+
+import settings
+from api.vision import detect_mouths
 
 
 class VideoManager(object):
+    logger = logging.getLogger("VideoManager")
+
     def __init__(self, filename: str):
         self.filename = filename
+        self.deferred_audio = None
+        self.deferred_masks: List[Tuple[float, float, Any]] = []
 
     def extract_audio(self, output_filename: str = None) -> str:
         """Extract audio file from video.
@@ -15,6 +24,7 @@ class VideoManager(object):
             Filename of the extracted audio.
 
         """
+
         completed_process = subprocess.run(
             [
                 "ffmpeg",
@@ -44,7 +54,7 @@ class VideoManager(object):
         completed_process.check_returncode()
         return output_filename
 
-    def extract_thumbnail(self, output_filename: str = None) -> str:
+    def extract_thumbnail(self, output_filename: str = None, time="00:00:00") -> str:
         """Extract thumbnail file from video.
 
         Args:
@@ -64,7 +74,7 @@ class VideoManager(object):
                 "-y",
                 # thumbnail time
                 "-ss",
-                "00:00:00",
+                str(time),
                 # input file
                 "-i",
                 self.filename,
@@ -73,9 +83,6 @@ class VideoManager(object):
                 "1",
                 # audio null
                 "-an",
-                # size
-                "-s",
-                "1280x720",
                 # output file
                 output_filename,
             ],
@@ -84,10 +91,61 @@ class VideoManager(object):
         return output_filename
 
     def apply_mask(self, start_time, end_time):
-        pass
+        return
+
+        def generate_thumbnail():
+            with open(
+                self.extract_thumbnail(settings.ROOT / "output/t.jpg", start_time), "rb"
+            ) as file:
+                start_thumbnail = file.read()
+
+            with open(
+                self.extract_thumbnail(settings.ROOT / "output/t.jpg", end_time), "rb"
+            ) as file:
+                end_thumbnail = file.read()
+
+            return (
+                start_thumbnail,
+                end_thumbnail,
+            )
+
+        start_mouths, end_mouths = [detect_mouths(i) for i in generate_thumbnail()]
+
+        self.deferred_masks.append([start_time, end_time, start_mouths, end_mouths])
 
     def apply_audio(self, audio: str):
-        pass
+        self.deferred_audio = audio
 
-    def save(self):
-        pass
+    def save(self, filename: str):
+        if self.deferred_audio:
+            completed_process = subprocess.run(
+                [
+                    "ffmpeg",
+                    # loglevel
+                    "-v",
+                    "warning",
+                    # overwrite output
+                    "-y",
+                    # input video
+                    "-i",
+                    self.filename,
+                    # filtered audio
+                    "-i",
+                    self.deferred_audio,
+                    # video convert option
+                    "-c:v",
+                    "copy",
+                    # audio convert option
+                    "-c:a",
+                    "aac",
+                    # use input video
+                    "-map",
+                    "0:v",
+                    # use filtered audio
+                    "-map",
+                    "1:a",
+                    # output file
+                    filename,
+                ]
+            )
+            completed_process.check_returncode()
