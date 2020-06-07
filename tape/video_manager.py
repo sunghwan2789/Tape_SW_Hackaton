@@ -1,14 +1,18 @@
+import logging
 import subprocess
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import settings
+from api.vision import detect_mouths
 
 
 class VideoManager(object):
+    logger = logging.getLogger("VideoManager")
+
     def __init__(self, filename: str):
         self.filename = filename
         self.deferred_audio = None
-        self.deferred_masks: List[Tuple[int, int, str]] = []
+        self.deferred_masks: List[Tuple[float, float, Any]] = []
 
     def extract_audio(self, output_filename: str = None) -> str:
         """Extract audio file from video.
@@ -70,7 +74,7 @@ class VideoManager(object):
                 "-y",
                 # thumbnail time
                 "-ss",
-                time,
+                str(time),
                 # input file
                 "-i",
                 self.filename,
@@ -87,11 +91,27 @@ class VideoManager(object):
         return output_filename
 
     def apply_mask(self, start_time, end_time):
-        def generate_thumbnail():
-            thumbnail = self.extract_thumbnail(settings.ROOT / "output/t.jpg")
+        return
 
-        if not "detect_mask":
-            self.deferred_masks.append([start_time, end_time, "mask"])
+        def generate_thumbnail():
+            with open(
+                self.extract_thumbnail(settings.ROOT / "output/t.jpg", start_time), "rb"
+            ) as file:
+                start_thumbnail = file.read()
+
+            with open(
+                self.extract_thumbnail(settings.ROOT / "output/t.jpg", end_time), "rb"
+            ) as file:
+                end_thumbnail = file.read()
+
+            return (
+                start_thumbnail,
+                end_thumbnail,
+            )
+
+        start_mouths, end_mouths = [detect_mouths(i) for i in generate_thumbnail()]
+
+        self.deferred_masks.append([start_time, end_time, start_mouths, end_mouths])
 
     def apply_audio(self, audio: str):
         self.deferred_audio = audio
