@@ -36,7 +36,7 @@ class Video(models.Model):
 
 
 class FilterSection(models.Model):
-    video = models.ForeignKey(User, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="filters")
     start_time = models.FloatField()
     end_time = models.FloatField()
     word = models.CharField(max_length=10)
